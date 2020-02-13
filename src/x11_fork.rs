@@ -15,6 +15,9 @@ use x11_clipboard::Clipboard as X11Clipboard;
 /// set. The fork is kept alive until the clipboard content changes, and may outlive your
 /// application.
 ///
+/// `get_contents` is unchanged, and is an alias for
+/// [`X11ClipboardContext::get_contents`][X11ClipboardContext].
+///
 /// ## Drawbacks
 ///
 /// - Set contents may not be immediately available, because they are set in a fork.

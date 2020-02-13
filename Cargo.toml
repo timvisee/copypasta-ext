@@ -13,4 +13,5 @@ clipboard = "0.5.0"
 
 [target.'cfg(all(unix, not(any(target_os="macos", target_os="android", target_os="emscripten"))))'.dependencies]
 libc = "0.2"
+which = "3.1"
 x11-clipboard = "0.3.0"
