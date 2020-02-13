@@ -4,6 +4,9 @@
 ))]
 pub mod x11_fork;
 
+// Re-export clipboard
+pub use clipboard;
+
 // Re-export
 #[cfg(all(
     unix,
