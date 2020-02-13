@@ -1,5 +1,4 @@
-//! Like [`x11_clipboard`][x11_clipboard], but invokes [`xclip`][xclip]/[`xsel`][xsel] to access
-//! clipboard.
+//! Invokes [`xclip`][xclip]/[`xsel`][xsel] to access clipboard.
 //!
 //! This provider ensures the clipboard contents you set remain available even after your
 //! application exists, unlike [`X11ClipboardContext`][X11ClipboardContext].
@@ -29,8 +28,41 @@
 //! - Set contents may not be immediately available, because they are set in an external binary.
 //! - May have undefined behaviour if `xclip` or `xsel` are modified.
 //!
+//! # Examples
+//!
+//! ```rust,no_run
+//! use clipboard_ext::prelude::*;
+//! use clipboard_ext::x11_bin::X11BinClipboardContext;
+//!
+//! let mut ctx = X11BinClipboardContext::new().unwrap();
+//! println!("{:?}", ctx.get_contents());
+//! ctx.set_contents("some string".into()).unwrap();
+//! ```
+//!
+//! Use `ClipboardContext` alias for better platform compatability:
+//!
+//! ```rust,no_run
+//! use clipboard_ext::prelude::*;
+//! use clipboard_ext::x11_bin::ClipboardContext;
+//!
+//! let mut ctx = ClipboardContext::new().unwrap();
+//! println!("{:?}", ctx.get_contents());
+//! ctx.set_contents("some string".into()).unwrap();
+//! ```
+//!
+//! Use `new_with_x11` to combine with [`X11ClipboardContext`][X11ClipboardContext] for better performance.
+//!
+//! ```rust,no_run
+//! use clipboard_ext::prelude::*;
+//! use clipboard_ext::x11_bin::X11BinClipboardContext;
+//!
+//! let mut ctx = X11BinClipboardContext::new_with_x11().unwrap();
+//! println!("{:?}", ctx.get_contents());
+//! ctx.set_contents("some string".into()).unwrap();
+//! ```
+//!
+//! [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
 //! [x11_clipboard]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/index.html
-//! [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
 //! [xclip]: https://github.com/astrand/xclip
 //! [xsel]: http://www.vergenet.net/~conrad/software/xsel/
 
@@ -51,12 +83,10 @@ use crate::combined::CombinedClipboardContext;
 /// `ClipboardContext` provided by `rust-clipboard` on other platforms.
 pub type ClipboardContext = X11BinClipboardContext;
 
-/// Like [`X11ClipboardContext`][X11ClipboardContext], but invokes [`xclip`][xclip]/[`xsel`][xsel]
-/// to access clipboard.
+/// Invokes [`xclip`][xclip]/[`xsel`][xsel] to access clipboard.
 ///
 /// See module documentation for more information.
 ///
-/// [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
 /// [xclip]: https://github.com/astrand/xclip
 /// [xsel]: http://www.vergenet.net/~conrad/software/xsel/
 pub struct X11BinClipboardContext(ClipboardType);
@@ -69,7 +99,7 @@ impl X11BinClipboardContext {
     /// This function also constructs a `X11ClipboardContext` for getting clipboard contents and
     /// combines the two to get the best of both worlds.
     ///
-    /// [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+    /// [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
     pub fn new_with_x11(
     ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {
         Self::new()?.with_x11()
@@ -82,7 +112,7 @@ impl X11BinClipboardContext {
     /// This function constructs a `X11ClipboardContext` for getting clipboard contents and
     /// combines the two to get the best of both worlds.
     ///
-    /// [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+    /// [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
     pub fn with_x11(
         self,
     ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {

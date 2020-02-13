@@ -17,13 +17,58 @@
 A clipboard library providing useful extensions for the
 [`rust-clipboard`][rust-clipboard] library.
 
-This library uses [`clipboard`][rust-clipboard] as base, and provides
-additional clipboard providers:
+I had a growing annoyance with `rust-clipboard`, because the clipboard is
+cleared on the Linux/X11 platform when your application exists as per X11
+design. The crate maintainer didn't want to implement workarounds (for valid
+reasons). This `clipboard-ext` crate provides additional
+clipboard contexts that solve this, along with a few other additions.
+
+Here are some of these additions:
 
 - `X11ForkClipboardProvider`: forks process and sets clipboard, keeps contents
-  after quit
+  after exit
 - `X11BinClipboardProvider`: invokes `xclip`/`xsel` to set clipboard, keeps
-  contents after quit
+  contents after exit
+- `CombinedClipboardProvider`: combine two providers, use different for
+  getting/setting clipboard
+
+## Example
+Get and set clipboard contents. Keeps contents in X11 clipboard after exit by
+forking the process. Falls back to standard clipboard provider on non X11 platforms.
+See [`x11_fork`](https://docs.rs/clipboard-ext/*/clipboard-ext/x11_fork/index.html)
+module for details.
+
+```rust
+use clipboard_ext::prelude::*;
+use clipboard_ext::x11_fork::ClipboardContext;
+
+fn main() {
+	let mut ctx = ClipboardContext::new().unwrap();
+	println!("{:?}", ctx.get_contents());
+	ctx.set_contents("some string".into()).unwrap();
+}
+```
+
+Get and set clipboard contents. Keeps contents in X11 clipboard after exit by
+invoking `xclip`/`xsel`. Falls back to standard clipboard provider on non X11
+platforms. See [`x11_bin`](https://docs.rs/clipboard-ext/*/clipboard-ext/x11_bin/index.html)
+module for details.
+
+```rust
+use clipboard_ext::prelude::*;
+use clipboard_ext::x11_bin::ClipboardContext;
+
+fn main() {
+	let mut ctx = ClipboardContext::new().unwrap();
+	println!("{:?}", ctx.get_contents());
+	ctx.set_contents("some string".into()).unwrap();
+}
+```
+
+## Requirements
+- Rust 1.40 or above
+- Same requirements as [`rust-clipboard`][rust-clipboard-requirements]
+- Requirements noted in specific clipboard context modules
 
 ## Special thanks
 - to `aweinstock314` for building [`rust-clipboard`][rust-clipboard]
@@ -34,3 +79,4 @@ This project is dual-licensed under the [MIT](./LICENSE.mit) and
 [Apache2](./LICENSE.apache2) license.
 
 [rust-clipboard]: https://github.com/aweinstock314/rust-clipboard
+[rust-clipboard-requirements]: https://github.com/aweinstock314/rust-clipboard#prerequisites

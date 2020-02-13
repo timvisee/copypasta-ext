@@ -33,3 +33,12 @@ pub mod x11_fork {
 // Re-export
 pub use clipboard;
 pub use combined::CombinedClipboardContext;
+
+/// Trait prelude.
+///
+/// ```rust
+/// use clipboard_ext::prelude::*;
+/// ```
+pub mod prelude {
+    pub use super::clipboard::ClipboardProvider;
+}

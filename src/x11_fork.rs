@@ -20,8 +20,30 @@
 //!   `set_contents` will return no error.
 //! - The fork might cause weird behaviour for some applications.
 //!
+//! # Examples
+//!
+//! ```rust,no_run
+//! use clipboard_ext::prelude::*;
+//! use clipboard_ext::x11_fork::X11ForkClipboardContext;
+//!
+//! let mut ctx: X11ForkClipboardContext = X11ForkClipboardContext::new().unwrap();
+//! println!("{:?}", ctx.get_contents());
+//! ctx.set_contents("some string".into()).unwrap();
+//! ```
+//!
+//! Use `ClipboardContext` alias for better platform compatability:
+//!
+//! ```rust,no_run
+//! use clipboard_ext::prelude::*;
+//! use clipboard_ext::x11_fork::ClipboardContext;
+//!
+//! let mut ctx = ClipboardContext::new().unwrap();
+//! println!("{:?}", ctx.get_contents());
+//! ctx.set_contents("some string".into()).unwrap();
+//! ```
+//!
 //! [x11_clipboard]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/index.html
-//! [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+//! [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
 
 use std::error::Error as StdError;
 use std::fmt;
@@ -44,7 +66,7 @@ pub type ClipboardContext = X11ForkClipboardContext;
 ///
 /// See module documentation for more information.
 ///
-/// [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+/// [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
 pub struct X11ForkClipboardContext<S = Clipboard>(X11ClipboardContext<S>)
 where
     S: Selection;
