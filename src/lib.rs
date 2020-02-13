@@ -1,3 +1,4 @@
+pub mod combined;
 #[cfg(all(
     unix,
     not(any(target_os = "macos", target_os = "android", target_os = "emscripten"))
@@ -13,6 +14,7 @@ pub mod x11_fork;
 pub use clipboard;
 
 // Re-export
+pub use combined::CombinedClipboardContext;
 #[cfg(all(
     unix,
     not(any(target_os = "macos", target_os = "android", target_os = "emscripten"))
