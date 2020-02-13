@@ -2,7 +2,7 @@
 [![Newest release on crates.io][crate-version-badge]][crate-link]
 [![Documentation][docs-badge]][docs]
 [![Number of downloads on crates.io][crate-download-badge]][crate-link]
-[![Project license][crate-license-badge]](LICENSE)
+[![Project license][crate-license-badge]](#License)
 
 [crate-download-badge]: https://img.shields.io/crates/d/clipboard-ext.svg
 [crate-license-badge]: https://img.shields.io/crates/l/clipboard-ext.svg
