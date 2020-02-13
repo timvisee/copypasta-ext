@@ -1,0 +1,82 @@
+image: "rust:slim"
+
+stages:
+  - check
+  - build
+  - test
+  - release
+
+# Variable defaults
+variables:
+  RUST_VERSION: stable
+  RUST_TARGET: x86_64-unknown-linux-gnu
+
+# Cache rust/cargo/build artifacts
+cache:
+  key: "$CI_PIPELINE_ID-$RUST_VERSION"
+  paths:
+    - /usr/local/cargo/registry/
+    - /usr/local/rustup/toolchains/
+    - /usr/local/rustup/update-hashes/
+    - target/
+
+# Install compiler and OpenSSL dependencies
+before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends xorg-dev
+  - |
+    rustup install $RUST_VERSION
+    rustup default $RUST_VERSION
+  - |
+    rustc --version
+    cargo --version
+
+# Check on stable, beta and nightly 
+.check-base: &check-base
+  stage: check
+  script:
+    - cargo check --verbose
+    - cargo check --no-default-features --verbose
+check-stable:
+  <<: *check-base
+check-beta:
+  <<: *check-base
+  variables:
+    RUST_VERSION: beta
+check-nightly:
+  <<: *check-base
+  variables:
+    RUST_VERSION: nightly
+check-old:
+  <<: *check-base
+  variables:
+    RUST_VERSION: "1.39.0"
+
+# Build for release using Rust stable
+build-x86_64-linux-gnu:
+  stage: build
+  needs:
+    - check-stable
+  script:
+    - cargo build --target=$RUST_TARGET --release --verbose
+
+# Run the unit tests through Cargo
+test-cargo:
+  stage: test
+  needs:
+    - check-stable
+  dependencies: []
+  script:
+    - cargo test --verbose
+
+# Cargo crate release
+release-crate:
+  stage: release
+  dependencies: []
+  only:
+    - /^v(\d+\.)*\d+$/
+  script:
+    - echo "Creating release crate to publish on crates.io..."
+    - echo $CARGO_TOKEN | cargo login
+    - echo "Publishing crate to crates.io..."
+    - cargo publish --verbose --allow-dirty
