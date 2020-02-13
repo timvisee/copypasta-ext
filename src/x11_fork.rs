@@ -23,11 +23,11 @@ use x11_clipboard::Clipboard as X11Clipboard;
 /// - The fork might cause weird behaviour for some applications.
 ///
 /// [X11ClipboardContext]: ../../clipboard/x11_clipboard/struct.X11ClipboardContext.html
-pub struct X11ForkClipboarContext<S = Clipboard>(X11ClipboardContext<S>)
+pub struct X11ForkClipboardContext<S = Clipboard>(X11ClipboardContext<S>)
 where
     S: Selection;
 
-impl<S> ClipboardProvider for X11ForkClipboarContext<S>
+impl<S> ClipboardProvider for X11ForkClipboardContext<S>
 where
     S: Selection,
 {
