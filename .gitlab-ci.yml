@@ -37,9 +37,9 @@ before_script:
   script:
     - cargo check --verbose
     - cargo check --no-default-features --verbose
+    - cargo check --no-default-features --features osc52 --verbose
     - cargo check --no-default-features --features x11-bin --verbose
     - cargo check --no-default-features --features x11-fork --verbose
-    - cargo check --no-default-features --features x11-bin,x11-fork --verbose
 check-stable:
   <<: *check-base
 check-beta:

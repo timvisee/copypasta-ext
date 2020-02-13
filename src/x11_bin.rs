@@ -94,7 +94,7 @@ pub struct X11BinClipboardContext(ClipboardType);
 impl X11BinClipboardContext {
     /// Construct combined with [`X11ClipboardContext`][X11ClipboardContext].
     ///
-    /// This clipboard context also invokes a binary for getting the clipboard contents. This may
+    /// This clipboard context invokes a binary for getting the clipboard contents. This may
     /// be considered inefficient and has other drawbacks as noted in the struct documentation.
     /// This function also constructs a `X11ClipboardContext` for getting clipboard contents and
     /// combines the two to get the best of both worlds.
@@ -107,7 +107,7 @@ impl X11BinClipboardContext {
 
     /// Combine this context with [`X11ClipboardContext`][X11ClipboardContext].
     ///
-    /// This clipboard context also invokes a binary for getting the clipboard contents. This may
+    /// This clipboard context invokes a binary for getting the clipboard contents. This may
     /// be considered inefficient and has other drawbacks as noted in the struct documentation.
     /// This function constructs a `X11ClipboardContext` for getting clipboard contents and
     /// combines the two to get the best of both worlds.

@@ -29,6 +29,8 @@ Here are some of these additions:
   forks process and sets clipboard, keeps contents after exit
 - [`X11BinClipboardProvider`](https://docs.rs/clipboard-ext/*/clipboard_ext/x11_bin/index.html):
   invokes `xclip`/`xsel` to set clipboard, keeps contents after exit
+- [`Osc52ClipboardContext`](https://docs.rs/clipboard-ext/*/clipboard_ext/osc52/index.html):
+  use OSC 52 escape sequence to set clipboard contents
 - [`CombinedClipboardProvider`](https://docs.rs/clipboard-ext/*/clipboard_ext/struct.CombinedClipboardContext.html):
   combine two providers, use different for getting/setting clipboard
 
