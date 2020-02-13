@@ -1,0 +1,13 @@
+[package]
+name = "clipboard-ext"
+version = "0.1.0"
+authors = ["Tim Visée <3a4fb3964f@sinenomine.email>"]
+description = "A clipboard library providing useful extension for rust-clipboard"
+repository = "https://gitlab.com/timvisee/rust-clipboard-ext"
+license = "MIT / Apache-2.0"
+keywords = ["clipboard"]
+edition = "2018"
+
+[dependencies]
+clipboard = "0.5.0"
+libc = "0.2"
