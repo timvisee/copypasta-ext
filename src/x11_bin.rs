@@ -4,8 +4,10 @@ use std::io::{Error as IoError, ErrorKind as IoErrorKind, Write};
 use std::process::{Command, Stdio};
 use std::string::FromUtf8Error;
 
-use clipboard::ClipboardProvider;
+use clipboard::{x11_clipboard::X11ClipboardContext, ClipboardProvider};
 use which::which;
+
+use crate::combined::CombinedClipboardContext;
 
 /// Like [`X11ClipboardContext`][X11ClipboardContext], but invokes [`xclip`][xclip]/[`xsel`][xsel]
 /// to access clipboard.
@@ -24,6 +26,10 @@ use which::which;
 /// What binary is used is deterimined at runtime on context creation based on the compile time
 /// variables and the runtime environment.
 ///
+/// ## Benefits
+///
+/// - Keeps contents in clipboard even after your application exists.
+///
 /// ## Drawbacks
 ///
 /// - Requires [`xclip`][xclip] or [`xsel`][xsel] to be available.
@@ -35,6 +41,35 @@ use which::which;
 /// [xclip]: https://github.com/astrand/xclip
 /// [xsel]: http://www.vergenet.net/~conrad/software/xsel/
 pub struct X11BinClipboardContext(ClipboardType);
+
+impl X11BinClipboardContext {
+    /// Construct combined with [`X11ClipboardContext`][X11ClipboardContext].
+    ///
+    /// This clipboard context also invokes a binary for getting the clipboard contents. This may
+    /// be considered inefficient and has other drawbacks as noted in the struct documentation.
+    /// This function also constructs a `X11ClipboardContext` for getting clipboard contents and
+    /// combines the two to get the best of both worlds.
+    ///
+    /// [X11ClipboardContext]: ../../clipboard/x11_clipboard/struct.X11ClipboardContext.html
+    pub fn new_with_x11(
+    ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {
+        Self::new()?.with_x11()
+    }
+
+    /// Combine this context with [`X11ClipboardContext`][X11ClipboardContext].
+    ///
+    /// This clipboard context also invokes a binary for getting the clipboard contents. This may
+    /// be considered inefficient and has other drawbacks as noted in the struct documentation.
+    /// This function constructs a `X11ClipboardContext` for getting clipboard contents and
+    /// combines the two to get the best of both worlds.
+    ///
+    /// [X11ClipboardContext]: ../../clipboard/x11_clipboard/struct.X11ClipboardContext.html
+    pub fn with_x11(
+        self,
+    ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {
+        Ok(CombinedClipboardContext(X11ClipboardContext::new()?, self))
+    }
+}
 
 impl ClipboardProvider for X11BinClipboardContext {
     fn new() -> Result<Self, Box<dyn StdError>> {
