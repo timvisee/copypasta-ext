@@ -1,6 +1,6 @@
 [package]
 name = "clipboard-ext"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Tim Visée <3a4fb3964f@sinenomine.email>"]
 description = "A clipboard library providing useful extensions for rust-clipboard."
 repository = "https://gitlab.com/timvisee/rust-clipboard-ext"
