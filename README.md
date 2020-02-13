@@ -25,17 +25,17 @@ clipboard contexts that solve this, along with a few other additions.
 
 Here are some of these additions:
 
-- `X11ForkClipboardProvider`: forks process and sets clipboard, keeps contents
-  after exit
-- `X11BinClipboardProvider`: invokes `xclip`/`xsel` to set clipboard, keeps
-  contents after exit
-- `CombinedClipboardProvider`: combine two providers, use different for
-  getting/setting clipboard
+- [`X11ForkClipboardProvider`](https://docs.rs/clipboard-ext/*/clipboard_ext/x11_fork/index.html):
+  forks process and sets clipboard, keeps contents after exit
+- [`X11BinClipboardProvider`](https://docs.rs/clipboard-ext/*/clipboard_ext/x11_bin/index.html):
+  invokes `xclip`/`xsel` to set clipboard, keeps contents after exit
+- [`CombinedClipboardProvider`](https://docs.rs/clipboard-ext/*/clipboard_ext/struct.CombinedClipboardContext.html):
+  combine two providers, use different for getting/setting clipboard
 
 ## Example
 Get and set clipboard contents. Keeps contents in X11 clipboard after exit by
 forking the process. Falls back to standard clipboard provider on non X11 platforms.
-See [`x11_fork`](https://docs.rs/clipboard-ext/*/clipboard-ext/x11_fork/index.html)
+See [`x11_fork`](https://docs.rs/clipboard-ext/*/clipboard_ext/x11_fork/index.html)
 module for details.
 
 ```rust
@@ -43,15 +43,15 @@ use clipboard_ext::prelude::*;
 use clipboard_ext::x11_fork::ClipboardContext;
 
 fn main() {
-	let mut ctx = ClipboardContext::new().unwrap();
-	println!("{:?}", ctx.get_contents());
-	ctx.set_contents("some string".into()).unwrap();
+    let mut ctx = ClipboardContext::new().unwrap();
+    println!("{:?}", ctx.get_contents());
+    ctx.set_contents("some string".into()).unwrap();
 }
 ```
 
 Get and set clipboard contents. Keeps contents in X11 clipboard after exit by
 invoking `xclip`/`xsel`. Falls back to standard clipboard provider on non X11
-platforms. See [`x11_bin`](https://docs.rs/clipboard-ext/*/clipboard-ext/x11_bin/index.html)
+platforms. See [`x11_bin`](https://docs.rs/clipboard-ext/*/clipboard_ext/x11_bin/index.html)
 module for details.
 
 ```rust
@@ -59,9 +59,9 @@ use clipboard_ext::prelude::*;
 use clipboard_ext::x11_bin::ClipboardContext;
 
 fn main() {
-	let mut ctx = ClipboardContext::new().unwrap();
-	println!("{:?}", ctx.get_contents());
-	ctx.set_contents("some string".into()).unwrap();
+    let mut ctx = ClipboardContext::new().unwrap();
+    println!("{:?}", ctx.get_contents());
+    ctx.set_contents("some string".into()).unwrap();
 }
 ```
 
