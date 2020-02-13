@@ -6,6 +6,12 @@ use clipboard::ClipboardProvider;
 use libc::fork;
 use x11_clipboard::Clipboard as X11Clipboard;
 
+/// Platform specific context.
+///
+/// Alias for `X11ForkClipboardContext` on supported platforms, aliases to standard
+/// `ClipboardContext` provided by `rust-clipboard` on other platforms.
+pub type ClipboardContext = X11ForkClipboardContext;
+
 /// Like [`X11ClipboardContext`][X11ClipboardContext], but forks to set contents.
 ///
 /// This provider ensures the clipboard contents you set remain available even after your

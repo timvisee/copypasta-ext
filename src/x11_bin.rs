@@ -9,6 +9,12 @@ use which::which;
 
 use crate::combined::CombinedClipboardContext;
 
+/// Platform specific context.
+///
+/// Alias for `X11BinClipboardContext` on supported platforms, aliases to standard
+/// `ClipboardContext` provided by `rust-clipboard` on other platforms.
+pub type ClipboardContext = X11BinClipboardContext;
+
 /// Like [`X11ClipboardContext`][X11ClipboardContext], but invokes [`xclip`][xclip]/[`xsel`][xsel]
 /// to access clipboard.
 ///
