@@ -5,6 +5,7 @@ authors = ["Tim Visée <3a4fb3964f@sinenomine.email>"]
 description = "A clipboard library providing useful extensions for rust-clipboard."
 repository = "https://gitlab.com/timvisee/rust-clipboard-ext"
 license = "MIT / Apache-2.0"
+readme = "README.md"
 keywords = ["clipboard"]
 exclude = ["/.github"]
 edition = "2018"
