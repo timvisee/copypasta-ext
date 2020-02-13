@@ -9,22 +9,25 @@ use clipboard::ClipboardProvider;
 // TODO: support XCLIP_BIN paths like ffsend
 // TODO: also use `xclip` or `xsel` for getting contents
 
-/// Like [`X11ClipboardContext`][X11ClipboardContext], but invokes `xclip`/`xsel` to set contents.
+/// Like [`X11ClipboardContext`][X11ClipboardContext], but invokes [`xclip`][xclip]/[`xsel`][xsel]
+/// to set contents.
 ///
 /// This provider ensures the clipboard contents you set remain available even after your
 /// application exists, unlike [`X11ClipboardContext`][X11ClipboardContext].
 ///
-/// When setting the clipboard with `set_contents`, the `xclip` or `xsel` binary is invoked to set
-/// the contents. These binaries internally fork and stay alive until the clipboard content
-/// changes.
+/// When setting the clipboard with `set_contents`, the [`xclip`][xclip] or [`xsel`][xsel] binary
+/// is invoked to set the contents. These binaries internally fork and stay alive until the
+/// clipboard content changes.
 ///
 /// ## Drawbacks
 ///
 /// - Set contents may not be immediately available, because they are set in an external binary.
-/// - Requires `xclip` or `xsel` to be available.
+/// - Requires [`xclip`][xclip] or [`xsel`][xsel] to be available.
 /// - May have undefined behaviour if `xclip` or `xsel` are modified.
 ///
 /// [X11ClipboardContext]: ../../clipboard/x11_clipboard/struct.X11ClipboardContext.html
+/// [xclip]: https://github.com/astrand/xclip
+/// [xsel]: http://www.vergenet.net/~conrad/software/xsel/
 pub struct X11BinClipboardContext<S = Clipboard>(X11ClipboardContext<S>)
 where
     S: Selection;

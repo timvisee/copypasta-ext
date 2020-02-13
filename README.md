@@ -1,10 +1,15 @@
 [![Build status on GitLab CI][gitlab-ci-master-badge]][gitlab-ci-link]
 [![Newest release on crates.io][crate-version-badge]][crate-link]
+[![Documentation][docs-badge]][docs]
+[![Number of downloads on crates.io][crate-download-badge]][crate-link]
 [![Project license][crate-license-badge]](LICENSE)
 
+[crate-download-badge]: https://img.shields.io/crates/d/clipboard-ext.svg
 [crate-license-badge]: https://img.shields.io/crates/l/clipboard-ext.svg
 [crate-link]: https://crates.io/crates/clipboard-ext
 [crate-version-badge]: https://img.shields.io/crates/v/clipboard-ext.svg
+[docs-badge]: https://docs.rs/clipboard-ext/badge.svg
+[docs]: https://docs.rs/clipboard-ext
 [gitlab-ci-link]: https://gitlab.com/timvisee/rust-clipboard-ext/pipelines
 [gitlab-ci-master-badge]: https://gitlab.com/timvisee/rust-clipboard-ext/badges/master/pipeline.svg
 
