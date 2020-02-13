@@ -1,3 +1,28 @@
+//! Like [`x11_clipboard`][x11_clipboard], but forks to set contents.
+//!
+//! This provider ensures the clipboard contents you set remain available even after your
+//! application exists, unlike [`X11ClipboardContext`][X11ClipboardContext].
+//!
+//! When setting the clipboard, the process is forked in which the clipboard is set. The fork is
+//! kept alive until the clipboard content changes, and may outlive your application.
+//!
+//! Use the provided `ClipboardContext` type alias to use this clipboard context on supported
+//! platforms, but fall back to the standard clipboard on others.
+//!
+//! ## Benefits
+//!
+//! - Keeps contents in clipboard even after your application exists.
+//!
+//! ## Drawbacks
+//!
+//! - Set contents may not be immediately available, because they are set in a fork.
+//! - Errors when setting the clipboard contents are not catched, the fork will panic
+//!   `set_contents` will return no error.
+//! - The fork might cause weird behaviour for some applications.
+//!
+//! [x11_clipboard]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/index.html
+//! [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+
 use std::error::Error as StdError;
 use std::fmt;
 
@@ -14,28 +39,12 @@ pub type ClipboardContext = X11ForkClipboardContext;
 
 /// Like [`X11ClipboardContext`][X11ClipboardContext], but forks to set contents.
 ///
-/// This provider ensures the clipboard contents you set remain available even after your
-/// application exists, unlike [`X11ClipboardContext`][X11ClipboardContext].
-///
-/// When setting the clipboard with `set_contents`, the process is forked in which the clipboard is
-/// set. The fork is kept alive until the clipboard content changes, and may outlive your
-/// application.
-///
-/// `get_contents` is unchanged, and is an alias for
+/// `set_contents` forks the process, `get_contents` is an alias for
 /// [`X11ClipboardContext::get_contents`][X11ClipboardContext].
 ///
-/// ## Benefits
+/// See module documentation for more information.
 ///
-/// - Keeps contents in clipboard even after your application exists.
-///
-/// ## Drawbacks
-///
-/// - Set contents may not be immediately available, because they are set in a fork.
-/// - Errors when setting the clipboard contents are not catched, the fork will panic
-///   `set_contents` will return no error.
-/// - The fork might cause weird behaviour for some applications.
-///
-/// [X11ClipboardContext]: ../../clipboard/x11_clipboard/struct.X11ClipboardContext.html
+/// [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
 pub struct X11ForkClipboardContext<S = Clipboard>(X11ClipboardContext<S>)
 where
     S: Selection;
@@ -80,6 +89,7 @@ where
     }
 }
 
+/// Represents X11 fork related error.
 #[derive(Debug)]
 pub enum Error {
     /// Failed to fork process, to set clipboard in.

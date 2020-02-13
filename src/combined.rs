@@ -2,7 +2,16 @@ use std::error::Error;
 
 use clipboard::ClipboardProvider;
 
-/// Combined, use different clipboard context for getting and setting.
+/// Combined, use different clipboard context for getting & setting.
+///
+/// Useful to combine different clipboard contexts to get the best of both worlds.
+///
+/// This may be constructed using helpers such as
+/// [`X11BinClipboardContext::new_with_x11`][new_with_x11] or
+/// [`X11BinClipboardContext::with_x11`][with_x11].
+///
+/// [new_with_x11]: ../clipboard_ext/x11_bin/struct.X11BinClipboardContext.html#method.new_with_x11
+/// [with_x11]: ../clipboard_ext/x11_bin/struct.X11BinClipboardContext.html#method.with_x11
 pub struct CombinedClipboardContext<G, S>(pub G, pub S)
 where
     G: ClipboardProvider,

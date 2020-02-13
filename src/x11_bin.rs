@@ -1,3 +1,39 @@
+//! Like [`x11_clipboard`][x11_clipboard], but invokes [`xclip`][xclip]/[`xsel`][xsel] to access
+//! clipboard.
+//!
+//! This provider ensures the clipboard contents you set remain available even after your
+//! application exists, unlike [`X11ClipboardContext`][X11ClipboardContext].
+//!
+//! When getting or setting the clipboard, the `xclip` or `xsel` binary is invoked to manage the
+//! contents. When setting the clipboard contents, these binaries internally fork and stay alive
+//! until the clipboard content changes.
+//!
+//! The `xclip` or `xsel` must be in `PATH`. Alternatively the paths of either may be set at
+//! compile time using the `XCLIP_PATH` and `XSEL_PATH` environment variables. If set, the
+//! clipboard context will automatically use those.
+//!
+//! What binary is used is deterimined at runtime on context creation based on the compile time
+//! variables and the runtime environment.
+//!
+//! Use the provided `ClipboardContext` type alias to use this clipboard context on supported
+//! platforms, but fall back to the standard clipboard on others.
+//!
+//! ## Benefits
+//!
+//! - Keeps contents in clipboard even after your application exists.
+//!
+//! ## Drawbacks
+//!
+//! - Requires [`xclip`][xclip] or [`xsel`][xsel] to be available.
+//! - Less performant than alternatives due to binary invocation.
+//! - Set contents may not be immediately available, because they are set in an external binary.
+//! - May have undefined behaviour if `xclip` or `xsel` are modified.
+//!
+//! [x11_clipboard]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/index.html
+//! [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+//! [xclip]: https://github.com/astrand/xclip
+//! [xsel]: http://www.vergenet.net/~conrad/software/xsel/
+
 use std::error::Error as StdError;
 use std::fmt;
 use std::io::{Error as IoError, ErrorKind as IoErrorKind, Write};
@@ -18,32 +54,9 @@ pub type ClipboardContext = X11BinClipboardContext;
 /// Like [`X11ClipboardContext`][X11ClipboardContext], but invokes [`xclip`][xclip]/[`xsel`][xsel]
 /// to access clipboard.
 ///
-/// This provider ensures the clipboard contents you set remain available even after your
-/// application exists, unlike [`X11ClipboardContext`][X11ClipboardContext].
+/// See module documentation for more information.
 ///
-/// When getting or setting the clipboard, the `xclip` or `xsel` binary is invoked to manage the
-/// contents. When setting the clipboard contents, these binaries internally fork and stay alive
-/// until the clipboard content changes.
-///
-/// The `xclip` or `xsel` must be in `PATH`. Alternatively the paths of either may be set at
-/// compile time using the `XCLIP_PATH` and `XSEL_PATH` environment variables. If set, the
-/// clipboard context will automatically use those.
-///
-/// What binary is used is deterimined at runtime on context creation based on the compile time
-/// variables and the runtime environment.
-///
-/// ## Benefits
-///
-/// - Keeps contents in clipboard even after your application exists.
-///
-/// ## Drawbacks
-///
-/// - Requires [`xclip`][xclip] or [`xsel`][xsel] to be available.
-/// - Less performant than alternatives due to binary invocation.
-/// - Set contents may not be immediately available, because they are set in an external binary.
-/// - May have undefined behaviour if `xclip` or `xsel` are modified.
-///
-/// [X11ClipboardContext]: ../../clipboard/x11_clipboard/struct.X11ClipboardContext.html
+/// [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
 /// [xclip]: https://github.com/astrand/xclip
 /// [xsel]: http://www.vergenet.net/~conrad/software/xsel/
 pub struct X11BinClipboardContext(ClipboardType);
@@ -56,7 +69,7 @@ impl X11BinClipboardContext {
     /// This function also constructs a `X11ClipboardContext` for getting clipboard contents and
     /// combines the two to get the best of both worlds.
     ///
-    /// [X11ClipboardContext]: ../../clipboard/x11_clipboard/struct.X11ClipboardContext.html
+    /// [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
     pub fn new_with_x11(
     ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {
         Self::new()?.with_x11()
@@ -69,7 +82,7 @@ impl X11BinClipboardContext {
     /// This function constructs a `X11ClipboardContext` for getting clipboard contents and
     /// combines the two to get the best of both worlds.
     ///
-    /// [X11ClipboardContext]: ../../clipboard/x11_clipboard/struct.X11ClipboardContext.html
+    /// [X11ClipboardContext]: https://docs.rs/clipboard/0.5.0/clipboard/x11_clipboard/struct.X11ClipboardContext.html
     pub fn with_x11(
         self,
     ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {
@@ -213,6 +226,7 @@ fn sys_cmd_set(bin: &'static str, command: &mut Command, contents: &str) -> Resu
     Ok(())
 }
 
+/// Represents X11 binary related error.
 #[derive(Debug)]
 pub enum Error {
     /// The `xclip` or `xsel` binary could not be found on the system, required for clipboard support.
