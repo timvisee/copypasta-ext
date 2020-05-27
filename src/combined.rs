@@ -22,7 +22,7 @@ where
 //     G: ClipboardProvider,
 //     S: ClipboardProvider,
 // {
-//     fn new() -> Result<Self, Box<dyn Error>> {
+//     pub fn new() -> Result<Self, Box<dyn Error>> {
 //         Ok(Self(G::new()?, S::new()?))
 //     }
 // }

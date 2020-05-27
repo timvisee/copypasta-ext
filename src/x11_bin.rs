@@ -92,7 +92,7 @@ pub type ClipboardContext = X11BinClipboardContext;
 pub struct X11BinClipboardContext(ClipboardType);
 
 impl X11BinClipboardContext {
-    fn new() -> Result<Self, Box<dyn StdError>> {
+    pub fn new() -> Result<Self, Box<dyn StdError>> {
         Ok(Self(ClipboardType::select()))
     }
 
