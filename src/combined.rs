@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use clipboard::ClipboardProvider;
+use copypasta::ClipboardProvider;
 
 /// Combined, use different clipboard context for getting & setting.
 ///
@@ -17,15 +17,21 @@ where
     G: ClipboardProvider,
     S: ClipboardProvider;
 
+// impl<G, S> CombinedClipboardContext<G, S>
+// where
+//     G: ClipboardProvider,
+//     S: ClipboardProvider,
+// {
+//     fn new() -> Result<Self, Box<dyn Error>> {
+//         Ok(Self(G::new()?, S::new()?))
+//     }
+// }
+
 impl<G, S> ClipboardProvider for CombinedClipboardContext<G, S>
 where
     G: ClipboardProvider,
     S: ClipboardProvider,
 {
-    fn new() -> Result<Self, Box<dyn Error>> {
-        Ok(Self(G::new()?, S::new()?))
-    }
-
     fn get_contents(&mut self) -> Result<String, Box<dyn Error>> {
         self.0.get_contents()
     }

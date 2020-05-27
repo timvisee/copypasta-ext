@@ -18,8 +18,8 @@
 //! # Examples
 //!
 //! ```rust,no_run
-//! use clipboard_ext::prelude::*;
-//! use clipboard_ext::x11_bin::X11BinClipboardContext;
+//! use copypasta_ext::prelude::*;
+//! use copypasta_ext::x11_bin::X11BinClipboardContext;
 //!
 //! let mut ctx = X11BinClipboardContext::new().unwrap();
 //! ctx.set_contents("some string".into()).unwrap();
@@ -28,22 +28,22 @@
 //! Use `new_with` to combine with another context such as [`X11ClipboardContext`][X11ClipboardContext] to support getting clipboard contents as well.
 //!
 //! ```rust,no_run
-//! use clipboard_ext::prelude::*;
-//! use clipboard_ext::osc52::Osc52ClipboardContext;
-//! use clipboard_ext::x11_bin::X11BinClipboardContext;
+//! use copypasta_ext::prelude::*;
+//! use copypasta_ext::osc52::Osc52ClipboardContext;
+//! use copypasta_ext::x11_bin::X11BinClipboardContext;
 //!
 //! let mut ctx = Osc52ClipboardContext::new_with(X11BinClipboardContext::new().unwrap()).unwrap();
 //! println!("{:?}", ctx.get_contents());
 //! ctx.set_contents("some string".into()).unwrap();
 //! ```
 //!
-//! [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+//! [X11ClipboardContext]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/struct.X11ClipboardContext.html
 
 use std::error::Error as StdError;
 use std::fmt;
 
 use base64;
-use clipboard::ClipboardProvider;
+use copypasta::ClipboardProvider;
 
 use crate::combined::CombinedClipboardContext;
 
@@ -53,6 +53,10 @@ use crate::combined::CombinedClipboardContext;
 pub struct Osc52ClipboardContext;
 
 impl Osc52ClipboardContext {
+    pub fn new() -> Result<Self, Box<dyn StdError>> {
+        Ok(Self)
+    }
+
     /// Construct combined with another context for getting the clipboard.
     ///
     /// This clipboard context only supports setting the clipboard contents.
@@ -79,10 +83,6 @@ impl Osc52ClipboardContext {
 }
 
 impl ClipboardProvider for Osc52ClipboardContext {
-    fn new() -> Result<Self, Box<dyn StdError>> {
-        Ok(Self)
-    }
-
     fn get_contents(&mut self) -> Result<String, Box<dyn StdError>> {
         Err(Error::Unsupported.into())
     }

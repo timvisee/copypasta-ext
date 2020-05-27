@@ -23,8 +23,8 @@
 //! # Examples
 //!
 //! ```rust,no_run
-//! use clipboard_ext::prelude::*;
-//! use clipboard_ext::x11_fork::X11ForkClipboardContext;
+//! use copypasta_ext::prelude::*;
+//! use copypasta_ext::x11_fork::X11ForkClipboardContext;
 //!
 //! let mut ctx: X11ForkClipboardContext = X11ForkClipboardContext::new().unwrap();
 //! println!("{:?}", ctx.get_contents());
@@ -34,22 +34,22 @@
 //! Use `ClipboardContext` alias for better platform compatability:
 //!
 //! ```rust,no_run
-//! use clipboard_ext::prelude::*;
-//! use clipboard_ext::x11_fork::ClipboardContext;
+//! use copypasta_ext::prelude::*;
+//! use copypasta_ext::x11_fork::ClipboardContext;
 //!
 //! let mut ctx = ClipboardContext::new().unwrap();
 //! println!("{:?}", ctx.get_contents());
 //! ctx.set_contents("some string".into()).unwrap();
 //! ```
 //!
-//! [x11_clipboard]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/index.html
-//! [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+//! [copypasta]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/index.html
+//! [X11ClipboardContext]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/struct.X11ClipboardContext.html
 
 use std::error::Error as StdError;
 use std::fmt;
 
-use clipboard::x11_clipboard::{Clipboard, Selection, X11ClipboardContext};
-use clipboard::ClipboardProvider;
+use copypasta::x11_clipboard::{Clipboard, Selection, X11ClipboardContext};
+use copypasta::ClipboardProvider;
 use libc::fork;
 use x11_clipboard::Clipboard as X11Clipboard;
 
@@ -66,19 +66,21 @@ pub type ClipboardContext = X11ForkClipboardContext;
 ///
 /// See module documentation for more information.
 ///
-/// [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+/// [X11ClipboardContext]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/struct.X11ClipboardContext.html
 pub struct X11ForkClipboardContext<S = Clipboard>(X11ClipboardContext<S>)
 where
     S: Selection;
+
+impl X11ForkClipboardContext {
+    pub fn new() -> Result<Self, Box<dyn StdError>> {
+        Ok(Self(X11ClipboardContext::new()?))
+    }
+}
 
 impl<S> ClipboardProvider for X11ForkClipboardContext<S>
 where
     S: Selection,
 {
-    fn new() -> Result<Self, Box<dyn StdError>> {
-        Ok(Self(X11ClipboardContext::new()?))
-    }
-
     fn get_contents(&mut self) -> Result<String, Box<dyn StdError>> {
         self.0.get_contents()
     }

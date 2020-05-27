@@ -31,8 +31,8 @@
 //! # Examples
 //!
 //! ```rust,no_run
-//! use clipboard_ext::prelude::*;
-//! use clipboard_ext::x11_bin::X11BinClipboardContext;
+//! use copypasta_ext::prelude::*;
+//! use copypasta_ext::x11_bin::X11BinClipboardContext;
 //!
 //! let mut ctx = X11BinClipboardContext::new().unwrap();
 //! println!("{:?}", ctx.get_contents());
@@ -42,8 +42,8 @@
 //! Use `ClipboardContext` alias for better platform compatability:
 //!
 //! ```rust,no_run
-//! use clipboard_ext::prelude::*;
-//! use clipboard_ext::x11_bin::ClipboardContext;
+//! use copypasta_ext::prelude::*;
+//! use copypasta_ext::x11_bin::ClipboardContext;
 //!
 //! let mut ctx = ClipboardContext::new().unwrap();
 //! println!("{:?}", ctx.get_contents());
@@ -53,16 +53,16 @@
 //! Use `new_with_x11` to combine with [`X11ClipboardContext`][X11ClipboardContext] for better performance.
 //!
 //! ```rust,no_run
-//! use clipboard_ext::prelude::*;
-//! use clipboard_ext::x11_bin::X11BinClipboardContext;
+//! use copypasta_ext::prelude::*;
+//! use copypasta_ext::x11_bin::X11BinClipboardContext;
 //!
 //! let mut ctx = X11BinClipboardContext::new_with_x11().unwrap();
 //! println!("{:?}", ctx.get_contents());
 //! ctx.set_contents("some string".into()).unwrap();
 //! ```
 //!
-//! [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
-//! [x11_clipboard]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/index.html
+//! [X11ClipboardContext]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/struct.X11ClipboardContext.html
+//! [x11_clipboard]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/index.html
 //! [xclip]: https://github.com/astrand/xclip
 //! [xsel]: http://www.vergenet.net/~conrad/software/xsel/
 
@@ -72,7 +72,7 @@ use std::io::{Error as IoError, ErrorKind as IoErrorKind, Write};
 use std::process::{Command, Stdio};
 use std::string::FromUtf8Error;
 
-use clipboard::{x11_clipboard::X11ClipboardContext, ClipboardProvider};
+use copypasta::{x11_clipboard::X11ClipboardContext, ClipboardProvider};
 use which::which;
 
 use crate::combined::CombinedClipboardContext;
@@ -92,6 +92,10 @@ pub type ClipboardContext = X11BinClipboardContext;
 pub struct X11BinClipboardContext(ClipboardType);
 
 impl X11BinClipboardContext {
+    fn new() -> Result<Self, Box<dyn StdError>> {
+        Ok(Self(ClipboardType::select()))
+    }
+
     /// Construct combined with [`X11ClipboardContext`][X11ClipboardContext].
     ///
     /// This clipboard context invokes a binary for getting the clipboard contents. This may
@@ -99,7 +103,7 @@ impl X11BinClipboardContext {
     /// This function also constructs a `X11ClipboardContext` for getting clipboard contents and
     /// combines the two to get the best of both worlds.
     ///
-    /// [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+    /// [X11ClipboardContext]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/struct.X11ClipboardContext.html
     pub fn new_with_x11(
     ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {
         Self::new()?.with_x11()
@@ -112,7 +116,7 @@ impl X11BinClipboardContext {
     /// This function constructs a `X11ClipboardContext` for getting clipboard contents and
     /// combines the two to get the best of both worlds.
     ///
-    /// [X11ClipboardContext]: https://docs.rs/clipboard/*/clipboard/x11_clipboard/struct.X11ClipboardContext.html
+    /// [X11ClipboardContext]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/struct.X11ClipboardContext.html
     pub fn with_x11(
         self,
     ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {
@@ -121,10 +125,6 @@ impl X11BinClipboardContext {
 }
 
 impl ClipboardProvider for X11BinClipboardContext {
-    fn new() -> Result<Self, Box<dyn StdError>> {
-        Ok(Self(ClipboardType::select()))
-    }
-
     fn get_contents(&mut self) -> Result<String, Box<dyn StdError>> {
         Ok(self.0.get()?)
     }
