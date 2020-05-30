@@ -44,7 +44,7 @@
 //!
 //! # Requirements
 //!
-//! - Rust 1.40 or above
+//! - Rust 1.41 or above
 //! - Same requirements as [`copypasta`][copypasta]
 //! - Requirements noted in specific clipboard context modules
 //!
