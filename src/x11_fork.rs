@@ -72,7 +72,7 @@ where
     S: Selection;
 
 impl X11ForkClipboardContext {
-    pub fn new() -> Result<Self, Box<dyn StdError>> {
+    pub fn new() -> crate::ClipResult<Self> {
         Ok(Self(X11ClipboardContext::new()?))
     }
 }
@@ -81,11 +81,11 @@ impl<S> ClipboardProvider for X11ForkClipboardContext<S>
 where
     S: Selection,
 {
-    fn get_contents(&mut self) -> Result<String, Box<dyn StdError>> {
+    fn get_contents(&mut self) -> crate::ClipResult<String> {
         self.0.get_contents()
     }
 
-    fn set_contents(&mut self, contents: String) -> Result<(), Box<dyn StdError>> {
+    fn set_contents(&mut self, contents: String) -> crate::ClipResult<()> {
         match unsafe { fork() } {
             -1 => Err(Error::Fork.into()),
             0 => {

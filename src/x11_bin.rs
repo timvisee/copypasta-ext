@@ -92,7 +92,7 @@ pub type ClipboardContext = X11BinClipboardContext;
 pub struct X11BinClipboardContext(ClipboardType);
 
 impl X11BinClipboardContext {
-    pub fn new() -> Result<Self, Box<dyn StdError>> {
+    pub fn new() -> crate::ClipResult<Self> {
         Ok(Self(ClipboardType::select()))
     }
 
@@ -104,8 +104,8 @@ impl X11BinClipboardContext {
     /// combines the two to get the best of both worlds.
     ///
     /// [X11ClipboardContext]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/struct.X11ClipboardContext.html
-    pub fn new_with_x11(
-    ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {
+    pub fn new_with_x11() -> crate::ClipResult<CombinedClipboardContext<X11ClipboardContext, Self>>
+    {
         Self::new()?.with_x11()
     }
 
@@ -119,17 +119,17 @@ impl X11BinClipboardContext {
     /// [X11ClipboardContext]: https://docs.rs/copypasta/*/copypasta/x11_clipboard/struct.X11ClipboardContext.html
     pub fn with_x11(
         self,
-    ) -> Result<CombinedClipboardContext<X11ClipboardContext, Self>, Box<dyn StdError>> {
+    ) -> crate::ClipResult<CombinedClipboardContext<X11ClipboardContext, Self>> {
         Ok(CombinedClipboardContext(X11ClipboardContext::new()?, self))
     }
 }
 
 impl ClipboardProvider for X11BinClipboardContext {
-    fn get_contents(&mut self) -> Result<String, Box<dyn StdError>> {
+    fn get_contents(&mut self) -> crate::ClipResult<String> {
         Ok(self.0.get()?)
     }
 
-    fn set_contents(&mut self, contents: String) -> Result<(), Box<dyn StdError>> {
+    fn set_contents(&mut self, contents: String) -> crate::ClipResult<()> {
         Ok(self.0.set(&contents)?)
     }
 }

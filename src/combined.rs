@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use copypasta::ClipboardProvider;
 
 /// Combined, use different clipboard context for getting & setting.
@@ -32,11 +30,11 @@ where
     G: ClipboardProvider,
     S: ClipboardProvider,
 {
-    fn get_contents(&mut self) -> Result<String, Box<dyn Error>> {
+    fn get_contents(&mut self) -> crate::ClipResult<String> {
         self.0.get_contents()
     }
 
-    fn set_contents(&mut self, contents: String) -> Result<(), Box<dyn Error>> {
+    fn set_contents(&mut self, contents: String) -> crate::ClipResult<()> {
         self.1.set_contents(contents)
     }
 }
