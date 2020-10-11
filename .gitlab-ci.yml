@@ -35,6 +35,7 @@ before_script:
 .check-base: &check-base
   stage: check
   script:
+    - cargo update
     - cargo check --verbose
     - cargo check --no-default-features --verbose
     - cargo check --no-default-features --features osc52 --verbose
