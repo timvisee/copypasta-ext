@@ -83,11 +83,11 @@ impl Osc52ClipboardContext {
 }
 
 impl ClipboardProvider for Osc52ClipboardContext {
-    fn get_contents(&mut self) -> Result<String, Box<dyn StdError>> {
+    fn get_contents(&mut self) -> crate::ClipResult<String> {
         Err(Error::Unsupported.into())
     }
 
-    fn set_contents(&mut self, contents: String) -> Result<(), Box<dyn StdError>> {
+    fn set_contents(&mut self, contents: String) -> crate::ClipResult<()> {
         // Use OSC 52 escape sequence to set clipboard through stdout
         print!("\x1B]52;c;{}\x07", base64::encode(&contents));
         Ok(())
