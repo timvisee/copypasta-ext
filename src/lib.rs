@@ -87,7 +87,7 @@ pub mod x11_fork {
 use std::error::Error;
 
 /// Copypasta error type, for your convenience.
-pub(crate) type ClipResult<T> = Result<T, Box<dyn Error + Send + Sync + 'static>>;
+pub type ClipResult<T> = Result<T, Box<dyn Error + Send + Sync + 'static>>;
 
 // Re-export
 pub use combined::CombinedClipboardContext;
