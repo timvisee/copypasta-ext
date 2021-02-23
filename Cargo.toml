@@ -15,11 +15,12 @@ edition = "2018"
 gitlab = { repository = "timvisee/copypasta-ext", branch = "master" }
 
 [features]
-default = ["x11-bin", "x11-fork"]
+default = ["x11-bin", "x11-fork", "wayland-bin"]
 
 osc52 = ["base64"]
 x11-bin = ["which"]
 x11-fork = ["libc", "x11-clipboard"]
+wayland-bin = ["which"]
 
 [dependencies]
 copypasta = "0.7.1"

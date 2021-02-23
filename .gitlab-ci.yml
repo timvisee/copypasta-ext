@@ -41,6 +41,7 @@ before_script:
     - cargo check --no-default-features --features osc52 --verbose
     - cargo check --no-default-features --features x11-bin --verbose
     - cargo check --no-default-features --features x11-fork --verbose
+    - cargo check --no-default-features --features wayland-bin --verbose
 check-stable:
   <<: *check-base
 check-beta:

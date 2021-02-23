@@ -54,6 +54,12 @@ mod combined;
 #[cfg(feature = "osc52")]
 pub mod osc52;
 #[cfg(all(
+    feature = "wayland-bin",
+    unix,
+    not(any(target_os = "macos", target_os = "android", target_os = "emscripten"))
+))]
+pub mod wayland_bin;
+#[cfg(all(
     feature = "x11-bin",
     unix,
     not(any(target_os = "macos", target_os = "android", target_os = "emscripten"))
@@ -68,11 +74,21 @@ pub mod x11_fork;
 
 // Expose platform specific contexts
 #[cfg(not(all(
+    feature = "wayland-bin",
+    unix,
+    not(any(target_os = "macos", target_os = "android", target_os = "emscripten"))
+)))]
+pub mod wayland_bin {
+    /// No Wayland binary (`wayland-bin`) support. Fallback to `copypasta::ClipboardContext`.
+    pub type ClipboardContext = copypasta::ClipboardContext;
+}
+#[cfg(not(all(
     feature = "x11-bin",
     unix,
     not(any(target_os = "macos", target_os = "android", target_os = "emscripten"))
 )))]
 pub mod x11_bin {
+    /// No X11 binary (`x11-bin`) support. Fallback to `copypasta::ClipboardContext`.
     pub type ClipboardContext = copypasta::ClipboardContext;
 }
 #[cfg(not(all(
