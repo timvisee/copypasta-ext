@@ -51,6 +51,7 @@
 //! [copypasta]: https://github.com/alacritty/copypasta
 
 mod combined;
+pub mod display;
 #[cfg(feature = "osc52")]
 pub mod osc52;
 #[cfg(all(
@@ -97,17 +98,30 @@ pub mod x11_bin {
     not(any(target_os = "macos", target_os = "android", target_os = "emscripten"))
 )))]
 pub mod x11_fork {
+    /// No X11 fork (`x11-fork`) support. Fallback to `copypasta::ClipboardContext`.
     pub type ClipboardContext = copypasta::ClipboardContext;
 }
 
 use std::error::Error;
 
-/// Copypasta error type, for your convenience.
+/// Copypasta result type, for your convenience.
 pub type ClipResult<T> = Result<T, Box<dyn Error + Send + Sync + 'static>>;
 
 // Re-export
 pub use combined::CombinedClipboardContext;
 pub use copypasta;
+
+/// Try to get clipboard context.
+///
+/// This attempts to obtain a clipboard context suitable for the current environment. This checks
+/// at runtime which clipboard contexts are available and which is best suited. If no compatible
+/// clipboard context is avaiable, or if initializing a context failed, `None` is returned.
+///
+/// Note: this function may be used to automatically select an X11 or Wayland clipboard on Unix
+/// systems based on the runtime environment.
+pub fn try_context() -> Option<Box<dyn prelude::ClipboardProvider>> {
+    display::DisplayServer::select().try_context()
+}
 
 /// Trait prelude.
 ///
