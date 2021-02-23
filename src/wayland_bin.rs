@@ -120,10 +120,7 @@ impl ClipboardType {
         match self {
             ClipboardType::WlClipboard(_, path) => sys_cmd_get(
                 "wl-paste",
-                Command::new(path.as_deref().unwrap_or_else(|| "wl-paste"))
-                    .arg("-sel")
-                    .arg("clip")
-                    .arg("-out"),
+                &mut Command::new(path.as_deref().unwrap_or_else(|| "wl-paste")),
             ),
         }
     }
@@ -133,9 +130,7 @@ impl ClipboardType {
         match self {
             ClipboardType::WlClipboard(path, _) => sys_cmd_set(
                 "wl-copy",
-                Command::new(path.as_deref().unwrap_or_else(|| "wl-copy"))
-                    .arg("-sel")
-                    .arg("clip"),
+                &mut Command::new(path.as_deref().unwrap_or_else(|| "wl-copy")),
                 contents,
             ),
         }
