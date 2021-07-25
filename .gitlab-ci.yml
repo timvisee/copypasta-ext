@@ -20,10 +20,10 @@ cache:
     - /usr/local/rustup/update-hashes/
     - target/
 
-# Install compiler and OpenSSL dependencies
+# Install compiler, Xorg and OpenSSL dependencies
 before_script:
   - apt-get update
-  - apt-get install -y --no-install-recommends xorg-dev python3
+  - apt-get install -y --no-install-recommends xorg-dev libxkbcommon-dev python3
   - |
     rustup install $RUST_VERSION
     rustup default $RUST_VERSION
