@@ -20,6 +20,10 @@ pub enum DisplayServer {
 
     /// The default Windows display server.
     Windows,
+
+    /// For TTYs.
+    /// Not an actual display server, but something with a clipboard context to fall back to.
+    Tty,
 }
 
 impl DisplayServer {
@@ -27,8 +31,8 @@ impl DisplayServer {
     ///
     /// This selection is made at runtime. This uses a best effort approach and does not reliably
     /// select the current display server. Selects any recognized display server regardless of
-    /// compiler feature flag configuration.
-    // TODO: return option, being `None` if this isn't X11 either.
+    /// compiler feature flag configuration. Defaults to `X11` on Unix if display server could not
+    /// be determined.
     #[allow(unreachable_code)]
     pub fn select() -> DisplayServer {
         #[cfg(target_os = "macos")]
@@ -39,7 +43,12 @@ impl DisplayServer {
         // Runtime check on Unix
         if is_wayland() {
             DisplayServer::Wayland
+        } else if is_x11() {
+            DisplayServer::X11
+        } else if is_tty() {
+            DisplayServer::Tty
         } else {
+            // TODO: return Option::None if this isn't X11 either.
             DisplayServer::X11
         }
     }
@@ -68,7 +77,6 @@ impl DisplayServer {
                         return Some(Box::new(context));
                     }
                 }
-
                 None
             }
             DisplayServer::Wayland => {
@@ -79,12 +87,21 @@ impl DisplayServer {
                         return Some(Box::new(context));
                     }
                 }
-
                 None
             }
             DisplayServer::MacOs | DisplayServer::Windows => copypasta::ClipboardContext::new()
                 .ok()
                 .map(|c| -> Box<dyn ClipboardProvider> { Box::new(c) }),
+            DisplayServer::Tty => {
+                #[cfg(feature = "osc52")]
+                {
+                    let context = crate::osc52::ClipboardContext::new();
+                    if let Ok(context) = context {
+                        return Some(Box::new(context));
+                    }
+                }
+                None
+            }
         }
     }
 }
@@ -92,7 +109,7 @@ impl DisplayServer {
 /// Check whether we're in an X11 environment.
 ///
 /// This is a best effort, may be unreliable.
-/// Checks whether the `DISPLAY` environment variable is set.
+/// Checks the `XDG_SESSION_TYPE` and `DISPLAY` environment variables.
 /// Always returns false on unsupported platforms such as Windows/macOS.
 ///
 /// Available regardless of the `x11-*` compiler feature flags.
@@ -111,7 +128,7 @@ pub fn is_x11() -> bool {
 /// Check whether we're in a Wayland environment.
 ///
 /// This is a best effort, may be unreliable.
-/// Checks whether the `WAYLAND_DISPLAY` environment variable is set.
+/// Checks the `XDG_SESSION_TYPE` and `WAYLAND_DISPLAY` environment variables.
 /// Always returns false on Windows/macOS.
 ///
 /// Available regardless of the `wayland-*` compiler feature flags.
@@ -125,6 +142,13 @@ pub fn is_wayland() -> bool {
         Some("x11") => false,
         _ => has_non_empty_env("WAYLAND_DISPLAY"),
     }
+}
+
+/// Check whether we're in a TTY environment.
+///
+/// This is a basic check and only returns true if `XDG_SESSION_TYPE` is set to `tty` explicitly.
+pub fn is_tty() -> bool {
+    option_env!("XDG_SESSION_TYPE") == Some("tty")
 }
 
 /// Check if an environment variable is set and is not empty.
