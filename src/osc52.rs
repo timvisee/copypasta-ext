@@ -47,6 +47,12 @@ use copypasta::ClipboardProvider;
 
 use crate::combined::CombinedClipboardContext;
 
+/// Platform specific context.
+///
+/// Alias for `Osc52ClipboardContext` on supported platforms, aliases to standard
+/// `ClipboardContext` provided by `rust-clipboard` on other platforms.
+pub type ClipboardContext = Osc52ClipboardContext;
+
 /// OSC 52 escape sequence to set clipboard contents.
 ///
 /// See module documentation for more information.
