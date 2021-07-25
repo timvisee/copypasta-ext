@@ -34,6 +34,10 @@ Here are some of these additions:
 - [`CombinedClipboardProvider`](https://docs.rs/copypasta-ext/*/copypasta_ext/struct.CombinedClipboardContext.html):
   combine two providers, use different for getting/setting clipboard
 
+To guess at runtime what clipboard provider is best used see the [`DisplayServer`](https://docs.rs/copypasta-ext/*/copypasta_ext/display/enum.DisplayServer.html) class.
+Enable all desired compiler feature flags for clipboard systems to support, and
+use `DisplayServer::select().try_context()` to obtain a clipboard context.
+
 This crate should work with the latest [`copypasta`][copypasta]. Feel free to
 open an issue or pull request otherwise. The `copypasta` crate is exposed as
 `copypasta_ext::copypasta`.
