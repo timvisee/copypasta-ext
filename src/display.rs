@@ -118,7 +118,7 @@ pub fn is_x11() -> bool {
         return false;
     }
 
-    match option_env!("XDG_SESSION_TYPE") {
+    match env::var("XDG_SESSION_TYPE").ok().as_deref() {
         Some("x11") => true,
         Some("wayland") => false,
         _ => has_non_empty_env("DISPLAY"),
@@ -137,7 +137,7 @@ pub fn is_wayland() -> bool {
         return false;
     }
 
-    match option_env!("XDG_SESSION_TYPE") {
+    match env::var("XDG_SESSION_TYPE").ok().as_deref() {
         Some("wayland") => true,
         Some("x11") => false,
         _ => has_non_empty_env("WAYLAND_DISPLAY"),
@@ -148,7 +148,7 @@ pub fn is_wayland() -> bool {
 ///
 /// This is a basic check and only returns true if `XDG_SESSION_TYPE` is set to `tty` explicitly.
 pub fn is_tty() -> bool {
-    option_env!("XDG_SESSION_TYPE") == Some("tty")
+    env::var("XDG_SESSION_TYPE").as_deref() == Ok("tty")
 }
 
 /// Check if an environment variable is set and is not empty.
