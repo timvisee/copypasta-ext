@@ -2,6 +2,8 @@
 //!
 //! Provides functionality to select used display server based on the runtime environment.
 
+use std::env;
+
 use crate::prelude::ClipboardProvider;
 
 /// A display server type.
@@ -24,7 +26,9 @@ impl DisplayServer {
     /// Select current used display server.
     ///
     /// This selection is made at runtime. This uses a best effort approach and does not reliably
-    /// select the current display server.
+    /// select the current display server. Selects any recognized display server regardless of
+    /// compiler feature flag configuration.
+    // TODO: return option, being `None` if this isn't X11 either.
     #[allow(unreachable_code)]
     pub fn select() -> DisplayServer {
         #[cfg(target_os = "macos")]
@@ -33,13 +37,10 @@ impl DisplayServer {
         return DisplayServer::Windows;
 
         // Runtime check on Unix
-        // TODO: improve this, see: https://unix.stackexchange.com/a/355476/61092
-        let dm = option_env!("XDG_SESSION_TYPE");
-        if dm == Some("wayland") || (dm != Some("x11") && option_env!("WAYLAND_DISPLAY").is_some())
-        {
-            return DisplayServer::Wayland;
+        if is_wayland() {
+            DisplayServer::Wayland
         } else {
-            return DisplayServer::X11;
+            DisplayServer::X11
         }
     }
 
@@ -86,4 +87,48 @@ impl DisplayServer {
                 .map(|c| -> Box<dyn ClipboardProvider> { Box::new(c) }),
         }
     }
+}
+
+/// Check whether we're in an X11 environment.
+///
+/// This is a best effort, may be unreliable.
+/// Checks whether the `DISPLAY` environment variable is set.
+/// Always returns false on unsupported platforms such as Windows/macOS.
+///
+/// Available regardless of the `x11-*` compiler feature flags.
+pub fn is_x11() -> bool {
+    if !cfg!(all(unix, not(all(target_os = "macos", target_os = "ios")))) {
+        return false;
+    }
+
+    match option_env!("XDG_SESSION_TYPE") {
+        Some("x11") => true,
+        Some("wayland") => false,
+        _ => has_non_empty_env("DISPLAY"),
+    }
+}
+
+/// Check whether we're in a Wayland environment.
+///
+/// This is a best effort, may be unreliable.
+/// Checks whether the `WAYLAND_DISPLAY` environment variable is set.
+/// Always returns false on Windows/macOS.
+///
+/// Available regardless of the `wayland-*` compiler feature flags.
+pub fn is_wayland() -> bool {
+    if !cfg!(all(unix, not(all(target_os = "macos", target_os = "ios")))) {
+        return false;
+    }
+
+    match option_env!("XDG_SESSION_TYPE") {
+        Some("wayland") => true,
+        Some("x11") => false,
+        _ => has_non_empty_env("WAYLAND_DISPLAY"),
+    }
+}
+
+/// Check if an environment variable is set and is not empty.
+#[inline]
+fn has_non_empty_env(env: &str) -> bool {
+    env::var_os(env).map(|v| !v.is_empty()).unwrap_or(false)
 }

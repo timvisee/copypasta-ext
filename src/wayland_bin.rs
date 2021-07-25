@@ -4,7 +4,7 @@
 //!
 //! When getting or setting the clipboard, the `wl-copy` and `wl-paste` binary is invoked to manage the
 //! contents. When setting the clipboard contents, these binaries are provided by the
-//! [`wl-clipboard][wl-clipboard] clipboard manager.
+//! [wl-clipboard][wl-clipboard] clipboard manager.
 //!
 //! The `wl-copy` or `wl-paste` must be in `PATH`. Alternatively the paths of either may be set at
 //! compile time using the `WL_COPY_PATH` and `WL_PASTE_PATH` environment variables.
