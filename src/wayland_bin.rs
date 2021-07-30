@@ -191,6 +191,7 @@ fn sys_cmd_set(bin: &'static str, command: &mut Command, contents: &str) -> Resu
 
 /// Represents Wayland binary related error.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Error {
     /// The `wl-copy` or `wl-paste` binary could not be found on the system, required for clipboard support.
     NoBinary,

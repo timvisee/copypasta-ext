@@ -8,6 +8,7 @@ use crate::prelude::ClipboardProvider;
 
 /// A display server type.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
+#[non_exhaustive]
 pub enum DisplayServer {
     /// The X11 display server.
     X11,

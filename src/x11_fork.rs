@@ -115,6 +115,7 @@ where
 
 /// Represents X11 fork related error.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Error {
     /// Failed to fork process, to set clipboard in.
     Fork,

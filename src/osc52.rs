@@ -102,6 +102,7 @@ impl ClipboardProvider for Osc52ClipboardContext {
 
 /// Represents OSC 52 clipboard related error.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Error {
     /// Getting clipboard contents is not supported.
     Unsupported,

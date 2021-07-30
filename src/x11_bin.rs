@@ -258,6 +258,7 @@ fn sys_cmd_set(bin: &'static str, command: &mut Command, contents: &str) -> Resu
 
 /// Represents X11 binary related error.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Error {
     /// The `xclip` or `xsel` binary could not be found on the system, required for clipboard support.
     NoBinary,
