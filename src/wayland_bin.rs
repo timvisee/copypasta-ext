@@ -54,7 +54,6 @@ use std::process::{Command, Stdio};
 use std::string::FromUtf8Error;
 
 use copypasta::ClipboardProvider;
-use which::which;
 
 /// Platform specific context.
 ///
@@ -107,10 +106,10 @@ impl ClipboardType {
                     .filter(|p| !p.trim().is_empty())
                     .map(|p| p.into()),
             )
-        } else if which("wl-copy").is_ok() || which("wl-paste").is_ok() {
-            ClipboardType::WlClipboard(None, None)
+        // TODO: return WlClipboard if wl-copy/wl-paste are found, error otherwise
+        // } else if which("wl-copy").is_ok() || which("wl-paste").is_ok() {
+        //     ClipboardType::WlClipboard(None, None)
         } else {
-            // TODO: should we error here instead, as no clipboard binary was found?
             ClipboardType::WlClipboard(None, None)
         }
     }
@@ -120,7 +119,7 @@ impl ClipboardType {
         match self {
             ClipboardType::WlClipboard(_, path) => sys_cmd_get(
                 "wl-paste",
-                &mut Command::new(path.as_deref().unwrap_or_else(|| "wl-paste")),
+                &mut Command::new(path.as_deref().unwrap_or("wl-paste")),
             ),
         }
     }
@@ -130,7 +129,7 @@ impl ClipboardType {
         match self {
             ClipboardType::WlClipboard(path, _) => sys_cmd_set(
                 "wl-copy",
-                &mut Command::new(path.as_deref().unwrap_or_else(|| "wl-copy")),
+                &mut Command::new(path.as_deref().unwrap_or("wl-copy")),
                 contents,
             ),
         }

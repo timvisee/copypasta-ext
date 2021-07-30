@@ -171,14 +171,14 @@ impl ClipboardType {
         match self {
             ClipboardType::Xclip(path) => sys_cmd_get(
                 "xclip",
-                Command::new(path.as_deref().unwrap_or_else(|| "xclip"))
+                Command::new(path.as_deref().unwrap_or("xclip"))
                     .arg("-sel")
                     .arg("clip")
                     .arg("-out"),
             ),
             ClipboardType::Xsel(path) => sys_cmd_get(
                 "xsel",
-                Command::new(path.as_deref().unwrap_or_else(|| "xsel"))
+                Command::new(path.as_deref().unwrap_or("xsel"))
                     .arg("--clipboard")
                     .arg("--output"),
             ),
@@ -190,14 +190,14 @@ impl ClipboardType {
         match self {
             ClipboardType::Xclip(path) => sys_cmd_set(
                 "xclip",
-                Command::new(path.as_deref().unwrap_or_else(|| "xclip"))
+                Command::new(path.as_deref().unwrap_or("xclip"))
                     .arg("-sel")
                     .arg("clip"),
                 contents,
             ),
             ClipboardType::Xsel(path) => sys_cmd_set(
                 "xsel",
-                Command::new(path.as_deref().unwrap_or_else(|| "xsel")).arg("--clipboard"),
+                Command::new(path.as_deref().unwrap_or("xsel")).arg("--clipboard"),
                 contents,
             ),
         }
