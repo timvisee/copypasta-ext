@@ -11,9 +11,6 @@ keywords = ["clipboard"]
 exclude = ["/.github"]
 edition = "2018"
 
-[badges]
-gitlab = { repository = "timvisee/copypasta-ext", branch = "master" }
-
 [features]
 default = ["x11-bin", "x11-fork", "wayland-bin"]
 
