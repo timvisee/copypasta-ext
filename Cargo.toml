@@ -1,6 +1,6 @@
 [package]
 name = "copypasta-ext"
-version = "0.3.8"
+version = "0.3.9"
 authors = ["Tim Visée <3a4fb3964f@sinenomine.email>"]
 description = "A clipboard library providing useful extensions for copypasta."
 repository = "https://gitlab.com/timvisee/copypasta-ext"
