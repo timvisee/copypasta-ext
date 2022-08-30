@@ -18,7 +18,7 @@ A clipboard library providing useful extensions for the
 [`copypasta`][copypasta] library.
 
 I had a growing annoyance with `copypasta`, because the clipboard is
-cleared on the Linux/X11 platform when your application exists as per X11
+cleared on the Linux/X11 platform when your application exits as per X11
 design. The crate maintainer didn't want to implement workarounds (for valid
 reasons). This `copypasta-ext` crate provides additional
 clipboard contexts that solve this, along with a few other additions.
