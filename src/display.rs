@@ -78,7 +78,9 @@ impl DisplayServer {
                         return Some(Box::new(context));
                     }
                 }
-                None
+                copypasta::ClipboardContext::new()
+                    .ok()
+                    .map(|c| -> Box<dyn ClipboardProvider> { Box::new(c) })
             }
             DisplayServer::Wayland => {
                 #[cfg(feature = "wayland-bin")]
@@ -88,7 +90,9 @@ impl DisplayServer {
                         return Some(Box::new(context));
                     }
                 }
-                None
+                copypasta::ClipboardContext::new()
+                    .ok()
+                    .map(|c| -> Box<dyn ClipboardProvider> { Box::new(c) })
             }
             DisplayServer::MacOs | DisplayServer::Windows => copypasta::ClipboardContext::new()
                 .ok()
