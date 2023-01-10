@@ -49,9 +49,11 @@ use std::error::Error as StdError;
 use std::fmt;
 
 use copypasta::x11_clipboard::{Clipboard, Selection, X11ClipboardContext};
-use copypasta::ClipboardProvider;
 use libc::fork;
 use x11_clipboard::Clipboard as X11Clipboard;
+
+use crate::display::DisplayServer;
+use crate::prelude::*;
 
 /// Platform specific context.
 ///
@@ -110,6 +112,19 @@ where
             }
             _pid => Ok(()),
         }
+    }
+}
+
+impl<S> ClipboardProviderExt for X11ForkClipboardContext<S>
+where
+    S: Selection,
+{
+    fn display_server(&self) -> Option<DisplayServer> {
+        Some(DisplayServer::X11)
+    }
+
+    fn has_bin_lifetime(&self) -> bool {
+        false
     }
 }
 

@@ -72,10 +72,12 @@ use std::io::{Error as IoError, ErrorKind as IoErrorKind, Write};
 use std::process::{Command, Stdio};
 use std::string::FromUtf8Error;
 
-use copypasta::{x11_clipboard::X11ClipboardContext, ClipboardProvider};
+use copypasta::x11_clipboard::X11ClipboardContext;
 use which::which;
 
 use crate::combined::CombinedClipboardContext;
+use crate::display::DisplayServer;
+use crate::prelude::*;
 
 /// Platform specific context.
 ///
@@ -131,6 +133,16 @@ impl ClipboardProvider for X11BinClipboardContext {
 
     fn set_contents(&mut self, contents: String) -> crate::ClipResult<()> {
         Ok(self.0.set(&contents)?)
+    }
+}
+
+impl ClipboardProviderExt for X11BinClipboardContext {
+    fn display_server(&self) -> Option<DisplayServer> {
+        Some(DisplayServer::X11)
+    }
+
+    fn has_bin_lifetime(&self) -> bool {
+        false
     }
 }
 

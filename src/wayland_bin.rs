@@ -53,7 +53,8 @@ use std::io::{Error as IoError, ErrorKind as IoErrorKind, Write};
 use std::process::{Command, Stdio};
 use std::string::FromUtf8Error;
 
-use copypasta::ClipboardProvider;
+use crate::display::DisplayServer;
+use crate::prelude::*;
 
 /// Platform specific context.
 ///
@@ -81,6 +82,16 @@ impl ClipboardProvider for WaylandBinClipboardContext {
 
     fn set_contents(&mut self, contents: String) -> crate::ClipResult<()> {
         Ok(self.0.set(&contents)?)
+    }
+}
+
+impl ClipboardProviderExt for WaylandBinClipboardContext {
+    fn display_server(&self) -> Option<DisplayServer> {
+        Some(DisplayServer::Wayland)
+    }
+
+    fn has_bin_lifetime(&self) -> bool {
+        false
     }
 }
 

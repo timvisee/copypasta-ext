@@ -4,7 +4,7 @@
 
 use std::env;
 
-use crate::prelude::ClipboardProvider;
+use crate::prelude::ClipboardProviderExt;
 
 /// A display server type.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
@@ -61,7 +61,7 @@ impl DisplayServer {
     ///
     /// If no compatible context is available or if no compatible context could be initialized,
     /// `None` is returned.
-    pub fn try_context(self) -> Option<Box<dyn ClipboardProvider>> {
+    pub fn try_context(self) -> Option<Box<dyn ClipboardProviderExt>> {
         match self {
             DisplayServer::X11 => {
                 #[cfg(feature = "x11-fork")]
@@ -78,9 +78,9 @@ impl DisplayServer {
                         return Some(Box::new(context));
                     }
                 }
-                copypasta::ClipboardContext::new()
+                copypasta::x11_clipboard::X11ClipboardContext::new()
                     .ok()
-                    .map(|c| -> Box<dyn ClipboardProvider> { Box::new(c) })
+                    .map(|c| -> Box<dyn ClipboardProviderExt> { Box::new(c) })
             }
             DisplayServer::Wayland => {
                 #[cfg(feature = "wayland-bin")]
@@ -90,13 +90,14 @@ impl DisplayServer {
                         return Some(Box::new(context));
                     }
                 }
+                // TODO: this correct?
                 copypasta::ClipboardContext::new()
                     .ok()
-                    .map(|c| -> Box<dyn ClipboardProvider> { Box::new(c) })
+                    .map(|c| -> Box<dyn ClipboardProviderExt> { Box::new(c) })
             }
             DisplayServer::MacOs | DisplayServer::Windows => copypasta::ClipboardContext::new()
                 .ok()
-                .map(|c| -> Box<dyn ClipboardProvider> { Box::new(c) }),
+                .map(|c| -> Box<dyn ClipboardProviderExt> { Box::new(c) }),
             DisplayServer::Tty => {
                 #[cfg(feature = "osc52")]
                 {
