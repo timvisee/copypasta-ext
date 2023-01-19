@@ -23,7 +23,7 @@ wayland-bin = ["which"]
 copypasta = "0.8.1"
 
 # Feature: osc52
-base64 = { version = "0.13.0", optional = true }
+base64 = { version = "0.21", optional = true }
 
 [target.'cfg(all(unix, not(any(target_os="macos", target_os="android", target_os="emscripten"))))'.dependencies]
 # Feature: x11-bin

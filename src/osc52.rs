@@ -42,7 +42,7 @@
 use std::error::Error as StdError;
 use std::fmt;
 
-use base64;
+use base64::engine::Engine;
 
 use crate::combined::CombinedClipboardContext;
 use crate::display::DisplayServer;
@@ -96,7 +96,10 @@ impl ClipboardProvider for Osc52ClipboardContext {
 
     fn set_contents(&mut self, contents: String) -> crate::ClipResult<()> {
         // Use OSC 52 escape sequence to set clipboard through stdout
-        print!("\x1B]52;c;{}\x07", base64::encode(&contents));
+        print!(
+            "\x1B]52;c;{}\x07",
+            base64::engine::general_purpose::STANDARD.encode(&contents)
+        );
         Ok(())
     }
 }
