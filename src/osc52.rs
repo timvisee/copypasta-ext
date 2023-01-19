@@ -43,9 +43,10 @@ use std::error::Error as StdError;
 use std::fmt;
 
 use base64;
-use copypasta::ClipboardProvider;
 
 use crate::combined::CombinedClipboardContext;
+use crate::display::DisplayServer;
+use crate::prelude::*;
 
 /// Platform specific context.
 ///
@@ -97,6 +98,16 @@ impl ClipboardProvider for Osc52ClipboardContext {
         // Use OSC 52 escape sequence to set clipboard through stdout
         print!("\x1B]52;c;{}\x07", base64::encode(&contents));
         Ok(())
+    }
+}
+
+impl ClipboardProviderExt for Osc52ClipboardContext {
+    fn display_server(&self) -> Option<DisplayServer> {
+        Some(DisplayServer::Tty)
+    }
+
+    fn has_bin_lifetime(&self) -> bool {
+        false
     }
 }
 

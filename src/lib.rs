@@ -132,7 +132,7 @@ pub use copypasta;
 ///
 /// Note: this function may be used to automatically select an X11 or Wayland clipboard on Unix
 /// systems based on the runtime environment.
-pub fn try_context() -> Option<Box<dyn prelude::ClipboardProvider>> {
+pub fn try_context() -> Option<Box<dyn ClipboardProviderExt>> {
     display::DisplayServer::select().try_context()
 }
 
@@ -143,4 +143,89 @@ pub fn try_context() -> Option<Box<dyn prelude::ClipboardProvider>> {
 /// ```
 pub mod prelude {
     pub use super::copypasta::ClipboardProvider;
+    pub use super::ClipboardProviderExt;
+}
+
+/// Extension trait for clipboard access
+pub trait ClipboardProviderExt: prelude::ClipboardProvider {
+    /// Get related display server.
+    fn display_server(&self) -> Option<display::DisplayServer>;
+
+    /// If this clipboard provider only has a clipboard lifetime of the current binary, rather than
+    /// forever.
+    fn has_bin_lifetime(&self) -> bool {
+        false
+    }
+}
+
+impl ClipboardProviderExt for copypasta::nop_clipboard::NopClipboardContext {
+    fn display_server(&self) -> Option<display::DisplayServer> {
+        None
+    }
+
+    fn has_bin_lifetime(&self) -> bool {
+        false
+    }
+}
+
+/// X11 clipboards have binary lifetime, not infinite.
+#[cfg(all(
+    unix,
+    not(any(
+        target_os = "macos",
+        target_os = "android",
+        target_os = "ios",
+        target_os = "emscripten"
+    ))
+))]
+impl ClipboardProviderExt for copypasta::x11_clipboard::X11ClipboardContext {
+    fn display_server(&self) -> Option<display::DisplayServer> {
+        Some(display::DisplayServer::X11)
+    }
+
+    fn has_bin_lifetime(&self) -> bool {
+        true
+    }
+}
+
+/// Wayland clipboards have binary lifetime, not infinite.
+#[cfg(all(
+    unix,
+    not(any(
+        target_os = "macos",
+        target_os = "android",
+        target_os = "ios",
+        target_os = "emscripten"
+    ))
+))]
+impl ClipboardProviderExt for copypasta::wayland_clipboard::Clipboard {
+    fn display_server(&self) -> Option<display::DisplayServer> {
+        Some(display::DisplayServer::Wayland)
+    }
+
+    fn has_bin_lifetime(&self) -> bool {
+        true
+    }
+}
+
+#[cfg(windows)]
+impl ClipboardProviderExt for copypasta::windows_clipboard::WindowsClipboardContext {
+    fn display_server(&self) -> Option<display::DisplayServer> {
+        Some(display::DisplayServer::Windows)
+    }
+
+    fn has_bin_lifetime(&self) -> bool {
+        false
+    }
+}
+
+#[cfg(target_os = "macos")]
+impl ClipboardProviderExt for copypasta::osx_clipboard::OSXClipboardContext {
+    fn display_server(&self) -> Option<display::DisplayServer> {
+        Some(display::DisplayServer::MacOs)
+    }
+
+    fn has_bin_lifetime(&self) -> bool {
+        false
+    }
 }
