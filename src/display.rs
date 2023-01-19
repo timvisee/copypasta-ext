@@ -78,9 +78,22 @@ impl DisplayServer {
                         return Some(Box::new(context));
                     }
                 }
-                copypasta::x11_clipboard::X11ClipboardContext::new()
-                    .ok()
-                    .map(|c| -> Box<dyn ClipboardProviderExt> { Box::new(c) })
+                #[cfg(all(
+                    unix,
+                    not(any(
+                        target_os = "macos",
+                        target_os = "android",
+                        target_os = "ios",
+                        target_os = "emscripten"
+                    ))
+                ))]
+                {
+                    let context = copypasta::x11_clipboard::X11ClipboardContext::new();
+                    if let Ok(context) = context {
+                        return Some(Box::new(context));
+                    }
+                }
+                None
             }
             DisplayServer::Wayland => {
                 #[cfg(feature = "wayland-bin")]
