@@ -76,7 +76,7 @@ fn main() {
 ```
 
 ## Requirements
-- Rust 1.59 or above (MSRV)
+- Rust 1.60 or above (MSRV)
 - Same requirements as [`copypasta`][copypasta]
 - Requirements noted in specific clipboard context modules
 
