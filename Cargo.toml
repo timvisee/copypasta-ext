@@ -20,7 +20,7 @@ x11-fork = ["libc", "x11-clipboard"]
 wayland-bin = ["which"]
 
 [dependencies]
-copypasta = "0.8.1"
+copypasta = "=0.8.2"
 
 # Feature: osc52
 base64 = { version = "0.21", optional = true }
